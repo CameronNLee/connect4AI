@@ -24,7 +24,8 @@ public class DeepConnect extends AIModule {
                 chosenMove = i;
                 break;
             }
-        }// minimaxValue(tree);
+        }
+        chosenMove = minimaxValue(tree);
     }
 
     public Node buildTree(Node tree, int levels) {
@@ -55,14 +56,20 @@ public class DeepConnect extends AIModule {
     // maybe have a check somehow if player1 is an AI player or not.
     public int minimaxValue(Node treeNode) {
         Node child;
-        int value = 0;
-        // cycle through every child of current node
-        // and run getMaxValue on all of them
-        for (int i = 0; i < treeNode.getChildren().size(); ++i) {
-            child = treeNode.getChildren().get(i);
-            value = getMaxValue(child);
+        int value = Integer.MIN_VALUE;
+        int finalMove = 0;
+        // cycle through every child of current board state
+        // and run getMinValue on all of them, then finally
+        // taking the Max value of all the min values.
+        for (int colIndex = 0; colIndex < treeNode.getChildren().size(); ++colIndex) {
+            child = treeNode.getChildren().get(colIndex);
+            int tempValue = Math.max(value, getMinValue(child));
+            if (value < tempValue) {
+                finalMove = colIndex; // where to ultimately drop the coin
+                value = tempValue;
+            }
         }
-        return value; // placeholder
+        return finalMove; // placeholder
     }
 
     public int getMaxValue(Node currentNode) {
@@ -91,7 +98,7 @@ public class DeepConnect extends AIModule {
         return utilityValue;
     }
 
-    // based on state of leaf node, determine the payoff
+    // based on a leaf node's board state, determine the payoff
     public int calculatePayoff(Node leaf) {
         /* do stuff here */
         return 0; // placeholder
