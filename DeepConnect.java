@@ -1,4 +1,4 @@
-// (c) Scott Madera, (add your name here)
+// (c) Scott Madera, Cameron Lee, (add your name here)
 
 import java.util.ArrayList;
 
@@ -11,6 +11,7 @@ import java.util.ArrayList;
  * the terminate flag.  However, your AI needs to check for the terminate flag.
  *
  * @author Scott Madera
+ * @author Cameron Lee
  * (add your name here)
  */
 public class DeepConnect extends AIModule {
@@ -19,11 +20,11 @@ public class DeepConnect extends AIModule {
         buildTree(tree, 7);
 
         for(int i = 0; i < game.getWidth(); i++) {
-            if(game.canMakeMove(i)) {
+            if(tree.getState().canMakeMove(i)) {
                 chosenMove = i;
                 break;
             }
-        }
+        }// minimaxValue(tree);
     }
 
     public Node buildTree(Node tree, int levels) {
@@ -48,6 +49,54 @@ public class DeepConnect extends AIModule {
         }
         return tree;
     }
+
+    // assumption: max player is always the first player
+    // NOTE: perhaps not if player1 is human while player2 is AI
+    // maybe have a check somehow if player1 is an AI player or not.
+    public int minimaxValue(Node treeNode) {
+        Node child;
+        int value = 0;
+        // cycle through every child of current node
+        // and run getMaxValue on all of them
+        for (int i = 0; i < treeNode.getChildren().size(); ++i) {
+            child = treeNode.getChildren().get(i);
+            value = getMaxValue(child);
+        }
+        return value; // placeholder
+    }
+
+    public int getMaxValue(Node currentNode) {
+        // terminal state check
+        if (currentNode.isLeafNode()) {
+            return calculatePayoff(currentNode);
+        }
+        int utilityValue = Integer.MIN_VALUE;
+        Node child;
+        for (int i = 0; i < currentNode.getChildren().size(); ++i) {
+            child = currentNode.getChildren().get(i);
+            utilityValue = Math.max(utilityValue, getMinValue(child));
+        }
+        return utilityValue;
+    }
+    public int getMinValue(Node currentNode) {
+        if (currentNode.isLeafNode()) {
+            return calculatePayoff(currentNode);
+        }
+        int utilityValue = Integer.MAX_VALUE;
+        Node child;
+        for (int i = 0; i < currentNode.getChildren().size(); ++i) {
+            child = currentNode.getChildren().get(i);
+            utilityValue = Math.min(utilityValue, getMaxValue(child));
+        }
+        return utilityValue;
+    }
+
+    // based on state of leaf node, determine the payoff
+    public int calculatePayoff(Node leaf) {
+        /* do stuff here */
+        return 0; // placeholder
+    }
+
 }
 
 class Node {
@@ -94,4 +143,5 @@ class Node {
     public void setState(GameStateModule stateIn) {
         this.state = stateIn;
     }
+
 }
