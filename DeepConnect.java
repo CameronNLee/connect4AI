@@ -121,14 +121,19 @@ public class DeepConnect extends AIModule {
     }
 
     public int determineIfWinningOrLosingState(Node leaf) {
-        int horizontalWin = determineIfHorizontalWinningOrLosingState(leaf);
-        if (horizontalWin > 0) {
-            return horizontalWin;
+        int win = determineIfHorizontalWinningOrLosingState(leaf);
+        if (win > 0) {
+            return win;
         }
-        
+        win = determineIfVerticalWinningOrLosingState(leaf);
+        if (win > 0) {
+            return win;
+        }
         return 0;
     }
 
+    // maybe convert this to check both Horizontal and Vertical winning
+    // states (or the vertical determine) later and see if there is a speed boost at all.
     public int determineIfHorizontalWinningOrLosingState(Node leaf) {
         int playerStreak = 0;
         int enemyStreak = 0;
