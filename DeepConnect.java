@@ -371,6 +371,23 @@ public class DeepConnect extends AIModule {
     }
 }
 
+class Tree {
+    private Node root;
+    // is this a good idea?
+    private ArrayList<Node> leaves;
+
+    Tree(Node newRoot) {
+        root = newRoot;
+        leafs = new ArrayList<Node>();
+    }
+
+    //If we store leaves, do we need a DFS?
+    //How should we gather the leaves?
+    public void DFS() {
+        ;
+    }
+}
+
 class Node {
     private Integer score;
     private GameStateModule state;
