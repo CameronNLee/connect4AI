@@ -15,9 +15,25 @@ import java.util.ArrayList;
  * (add your name here)
  */
 public class DeepConnect extends AIModule {
+    private int player;
+    private int enemy;
+
+    DeepConnect() {
+        player = 0;
+        enemy = 0;
+    }
+
     public void getNextMove(final GameStateModule game) {
         Node tree = new Node(game);
         buildTree(tree, 7);
+
+        player = game.getActivePlayer();
+        if (player == 1) {
+            enemy = 2;
+        }
+        else {
+            enemy = 1;
+        }
 
         for(int i = 0; i < game.getWidth(); i++) {
             if(tree.getState().canMakeMove(i)) {
