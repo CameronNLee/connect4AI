@@ -156,6 +156,8 @@ public class DeepConnect extends AIModule {
                     return enemy;
                 }
             }
+            playerStreak = 0;
+            enemyStreak = 0;
         }
         return 0;
     }
