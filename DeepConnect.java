@@ -179,9 +179,11 @@ public class DeepConnect extends AIModule {
         return 0;
     }
 
-    // maybe convert this to check both Horizontal and Vertical winning
+    // maybe convert this to check both horizontal and vertical 3 in a row
     // states (or the vertical determine) later and see if there is a speed boost at all.
-    public int determineIfHorizontalWinningOrLosingState(Node leaf) {
+    // can use for 3 in a row
+    // Maybe convert to count number of streaks?
+    public int determineIfHorizontalStreak(Node leaf, int totalStreak) {
         int playerStreak = 0;
         int enemyStreak = 0;
         int occupies = 0;
@@ -201,10 +203,10 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                     enemyStreak = 0;
                 }
-                if (playerStreak == 4) {
+                if (playerStreak == totalStreak) {
                     return player;
                 }
-                else if (enemyStreak == 4) {
+                else if (enemyStreak == totalStreak) {
                     return enemy;
                 }
             }
@@ -214,7 +216,7 @@ public class DeepConnect extends AIModule {
         return 0;
     }
 
-    public int determineIfVerticalWinningOrLosingState(Node leaf) {
+    public int determineIfVerticalStreak(Node leaf, int totalStreak) {
         int playerStreak = 0;
         int enemyStreak = 0;
         int occupies = 0;
@@ -234,10 +236,10 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                     enemyStreak = 0;
                 }
-                if (playerStreak == 4) {
+                if (playerStreak == totalStreak) {
                     return player;
                 }
-                else if (enemyStreak == 4) {
+                else if (enemyStreak == totalStreak) {
                     return enemy;
                 }
             }
@@ -247,7 +249,7 @@ public class DeepConnect extends AIModule {
         return 0;
     }
 
-    public int determineIfDiagonalWinningOrLosingState(Node leaf) {
+    public int determineIfDiagonalStreak(Node leaf, int totalStreak) {
         int playerStreak = 0;
         int enemyStreak = 0;
         int occupies = 0;
@@ -272,10 +274,10 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                     enemyStreak = 0;
                 }
-                if (playerStreak == 4) {
+                if (playerStreak == totalStreak) {
                     return player;
                 }
-                else if (enemyStreak == 4) {
+                else if (enemyStreak == totalStreak) {
                     return enemy;
                 }
             }
@@ -299,10 +301,10 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                     enemyStreak = 0;
                 }
-                if (playerStreak == 4) {
+                if (playerStreak == totalStreak) {
                     return player;
                 }
-                else if (enemyStreak == 4) {
+                else if (enemyStreak == totalStreak) {
                     return enemy;
                 }
             }
@@ -328,10 +330,10 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                     enemyStreak = 0;
                 }
-                if (playerStreak == 4) {
+                if (playerStreak == totalStreak) {
                     return player;
                 }
-                else if (enemyStreak == 4) {
+                else if (enemyStreak == totalStreak) {
                     return enemy;
                 }
             }
@@ -355,10 +357,10 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                     enemyStreak = 0;
                 }
-                if (playerStreak == 4) {
+                if (playerStreak == totalStreak) {
                     return player;
                 }
-                else if (enemyStreak == 4) {
+                else if (enemyStreak == totalStreak) {
                     return enemy;
                 }
             }
