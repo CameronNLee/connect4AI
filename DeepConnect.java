@@ -161,6 +161,39 @@ public class DeepConnect extends AIModule {
         }
         return 0;
     }
+
+    public int determineIfVerticalWinningOrLosingState(Node leaf) {
+        int playerStreak = 0;
+        int enemyStreak = 0;
+        int occupies = 0;
+
+        for (int i = 0; i < leaf.getState().getWidth(); i++) {
+            for (int j = 0; j < leaf.getState().getHeight(); j++) {
+                occupies = leaf.getState().getAt(i,j);
+                if (occupies == player) {
+                    playerStreak += 1;
+                    enemyStreak = 0;
+                }
+                else if (occupies == enemy) {
+                    enemyStreak += 1;
+                    playerStreak = 0;
+                }
+                else {
+                    playerStreak = 0;
+                    enemyStreak = 0;
+                }
+                if (playerStreak == 4) {
+                    return player;
+                }
+                else if (enemyStreak == 4) {
+                    return enemy;
+                }
+            }
+            playerStreak = 0;
+            enemyStreak = 0;
+        }
+        return 0;
+    }
 }
 
 class Node {
