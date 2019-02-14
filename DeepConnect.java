@@ -44,11 +44,24 @@ public class DeepConnect extends AIModule {
         chosenMove = minimaxValue(tree);
     }
 
+    /**
+     * Recurisvely build the game tree down to the specified depth.
+     *
+     * @param tree The current board state when this AI's getNextMove() is called
+     * @param levels The depth
+     * @return returns the passed in node
+     */
+
+    // Should this be void? buildTree returns a node, but it doesn't
+    // assign anything to a Node variable in getNextMove().
     public Node buildTree(Node tree, int levels) {
         if (levels == 0) {
             return tree;
         }
         GameStateModule stateCopy;
+        // NOTE: won't always be 7 children made per node; need to have a break somewhere
+        // for special cases like when a child node happens to have a game over board state;
+        // in that case, that node should have no children, as it is a leaf node.
         for (int i = 0; i < tree.getState().getWidth(); i++) {
             stateCopy = tree.getState().copy();
             try {
