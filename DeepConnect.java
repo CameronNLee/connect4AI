@@ -24,8 +24,8 @@ public class DeepConnect extends AIModule {
     }
 
     public void getNextMove(final GameStateModule game) {
-        Node tree = new Node(game);
-        buildTree(tree, 6);
+        Node root = new Node(game);
+        buildTree(root, 6);
 
         player = game.getActivePlayer();
         if (player == 1) {
@@ -36,12 +36,12 @@ public class DeepConnect extends AIModule {
         }
 
         for(int i = 0; i < game.getWidth(); i++) {
-            if(tree.getState().canMakeMove(i)) {
+            if(root.getState().canMakeMove(i)) {
                 chosenMove = i;
                 break;
             }
         }
-        chosenMove = minimaxValue(tree);
+        chosenMove = minimaxValue(root);
     }
 
     /**
@@ -52,16 +52,16 @@ public class DeepConnect extends AIModule {
      * @return returns the passed in node
      */
 
-    public Node buildTree(Node tree, int levels) {
+    public Node buildTree(Node root, int levels) {
         if (levels == 0) {
-            return tree;
+            return root;
         }
         GameStateModule stateCopy;
         // NOTE: won't always be 7 children made per node; need to have a break somewhere
         // for special cases like when a child node happens to have a game over board state
         // before exhausting the depth entirely. in that case, that node should have no children.
-        for (int i = 0; i < tree.getState().getWidth(); i++) {
-            stateCopy = tree.getState().copy();
+        for (int i = 0; i < root.getState().getWidth(); i++) {
+            stateCopy = root.getState().copy();
 
             if (stateCopy.isGameOver()) {
                 break; // don't bother making children for this node
@@ -71,7 +71,7 @@ public class DeepConnect extends AIModule {
             }
             stateCopy.makeMove(i);
             Node newChild = new Node(stateCopy);
-            tree.addChild(newChild);
+            root.addChild(newChild);
 
          /* try {
                 stateCopy.makeMove(i);
@@ -83,10 +83,10 @@ public class DeepConnect extends AIModule {
                 ;
             } */
         }
-        for (int i = 0; i < tree.getChildren().size(); i++) {
-            tree.getChildren().set(i, buildTree(tree.getChildren().get(i), levels-1));
+        for (int i = 0; i < root.getChildren().size(); i++) {
+            root.getChildren().set(i, buildTree(root.getChildren().get(i), levels-1));
         }
-        return tree;
+        return root;
     }
 
     // assumption: max player is always the first player
