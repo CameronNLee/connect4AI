@@ -63,10 +63,10 @@ public class DeepConnect extends AIModule {
         for (int i = 0; i < tree.getState().getWidth(); i++) {
             stateCopy = tree.getState().copy();
 
-            if (tree.getState().isGameOver()) {
+            if (stateCopy.isGameOver()) {
                 break; // don't bother making children for this node
             }
-            if (!tree.getState().canMakeMove(i)) {
+            if (!stateCopy.canMakeMove(i)) {
                 continue; // ignore making impossible children nodes
             }
             stateCopy.makeMove(i);
@@ -102,7 +102,7 @@ public class DeepConnect extends AIModule {
         for (int colIndex = 0; colIndex < treeNode.getChildren().size(); ++colIndex) {
             child = treeNode.getChildren().get(colIndex);
             int tempValue = Math.max(value, getMinValue(child));
-            if (value < tempValue) {
+            if (tempValue > value) {
                 finalMove = colIndex; // where to ultimately drop the coin
                 value = tempValue;
             }
