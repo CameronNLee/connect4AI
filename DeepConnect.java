@@ -25,7 +25,7 @@ public class DeepConnect extends AIModule {
 
     public void getNextMove(final GameStateModule game) {
         Node tree = new Node(game);
-        buildTree(tree, 7);
+        buildTree(tree, 6);
 
         player = game.getActivePlayer();
         if (player == 1) {
@@ -271,7 +271,7 @@ public class DeepConnect extends AIModule {
                 }
                 else if (occupies == enemy) {
                     enemyStreak += 1;
-                    playerStreak = 0
+                    playerStreak = 0;
                 }
                 else {
                     playerStreak = 0;
@@ -300,7 +300,7 @@ public class DeepConnect extends AIModule {
                 }
                 else if (occupies == enemy) {
                     enemyStreak += 1;
-                    playerStreak = 0
+                    playerStreak = 0;
                         }
                 else {
                     playerStreak = 0;
@@ -327,7 +327,7 @@ public class DeepConnect extends AIModule {
                 }
                 else if (occupies == enemy) {
                     enemyStreak += 1;
-                    playerStreak = 0
+                    playerStreak = 0;
                         }
                 else {
                     playerStreak = 0;
@@ -344,6 +344,7 @@ public class DeepConnect extends AIModule {
             enemyStreak = 0;
         }
         return 0;
+    }
 }
 
 class Node {
