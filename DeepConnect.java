@@ -129,6 +129,10 @@ public class DeepConnect extends AIModule {
         if (win > 0) {
             return win;
         }
+        win = determineIfDiagonalWinningOrLosingState(leaf);
+        if (win > 0) {
+            return win;
+        }
         return 0;
     }
 
@@ -199,6 +203,124 @@ public class DeepConnect extends AIModule {
         }
         return 0;
     }
+
+    public int determineIfDiagonalWinningOrLosingState(Node leaf) {
+        int playerStreak = 0;
+        int enemyStreak = 0;
+        int occupies = 0;
+        int maxRow = leaf.getState().getHeight();
+        int maxCol = leaf.getState().getWidth();
+
+        // left to right
+
+        // top left to bottom right, moving down the rows
+        for (int rowBegin = maxRow-1; rowBegin > 2; rowBegin--) {
+            for (int row = rowBegin, col = 0; row >= 0 && col < maxCol; row--, col++) {
+                occupies = leaf.getState().getAt(col,row);
+                if (occupies == player) {
+                    playerStreak += 1;
+                    enemyStreak = 0;
+                }
+                else if (occupies == enemy) {
+                    enemyStreak += 1;
+                    playerStreak = 0;
+                }
+                else {
+                    playerStreak = 0;
+                    enemyStreak = 0;
+                }
+                if (playerStreak == 4) {
+                    return player;
+                }
+                else if (enemyStreak == 4) {
+                    return enemy;
+                }
+            }
+            playerStreak = 0;
+            enemyStreak = 0;
+        }
+
+        // top-left to bottom-right, moving up the columns
+        for (int colBegin = 1; colBegin < maxCol-3; colBegin++) {
+            for (int row = maxRow-1, col = colBegin; row >= 0 && col < maxCol; row--, col++) {
+                occupies = leaf.getState().getAt(col,row);
+                if (occupies == player) {
+                    playerStreak += 1;
+                    enemyStreak = 0;
+                }
+                else if (occupies == enemy) {
+                    enemyStreak += 1;
+                    playerStreak = 0
+                }
+                else {
+                    playerStreak = 0;
+                    enemyStreak = 0;
+                }
+                if (playerStreak == 4) {
+                    return player;
+                }
+                else if (enemyStreak == 4) {
+                    return enemy;
+                }
+            }
+            playerStreak = 0;
+            enemyStreak = 0;
+        }
+
+        // top-right to bottom-left, moving down the columns
+        for (int colBegin = maxCol-2; colBegin >= 3; colBegin--) {
+            for (int row = maxRow-1, col = colBegin; row >= 0 && col >= 0; row--, col--) {
+                occupies = leaf.getState().getAt(col,row);
+                if (occupies == player) {
+                    playerStreak += 1;
+                    enemyStreak = 0;
+                }
+                else if (occupies == enemy) {
+                    enemyStreak += 1;
+                    playerStreak = 0
+                        }
+                else {
+                    playerStreak = 0;
+                    enemyStreak = 0;
+                }
+                if (playerStreak == 4) {
+                    return player;
+                }
+                else if (enemyStreak == 4) {
+                    return enemy;
+                }
+            }
+            playerStreak = 0;
+            enemyStreak = 0;
+        }
+
+        // top-right to bottom-left, moving down the rows
+        for (int rowBegin = maxRow-1; rowBegin >= 2; rowBegin--) {
+            for (int row = rowBegin, col = maxCol-1; row >= 0 && col >= 0; row--, col--) {
+                occupies = leaf.getState().getAt(col,row);
+                if (occupies == player) {
+                    playerStreak += 1;
+                    enemyStreak = 0;
+                }
+                else if (occupies == enemy) {
+                    enemyStreak += 1;
+                    playerStreak = 0
+                        }
+                else {
+                    playerStreak = 0;
+                    enemyStreak = 0;
+                }
+                if (playerStreak == 4) {
+                    return player;
+                }
+                else if (enemyStreak == 4) {
+                    return enemy;
+                }
+            }
+            playerStreak = 0;
+            enemyStreak = 0;
+        }
+        return 0;
 }
 
 class Node {
