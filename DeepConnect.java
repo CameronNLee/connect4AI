@@ -139,9 +139,9 @@ public class DeepConnect extends AIModule {
         int enemyStreak = 0;
         int occupies = 0;
 
-        for (int i = 0; i < leaf.getState().getHeight(); i++) {
-            for (int j = 0; j < leaf.getState().getWidth(); j++) {
-                occupies = leaf.getState().getAt(j,i);
+        for (int row = 0; row < leaf.getState().getHeight(); row++) {
+            for (int col = 0; col < leaf.getState().getWidth(); col++) {
+                occupies = leaf.getState().getAt(col,row);
                 if (occupies == player) {
                     playerStreak += 1;
                     enemyStreak = 0;
@@ -172,9 +172,9 @@ public class DeepConnect extends AIModule {
         int enemyStreak = 0;
         int occupies = 0;
 
-        for (int i = 0; i < leaf.getState().getWidth(); i++) {
-            for (int j = 0; j < leaf.getState().getHeight(); j++) {
-                occupies = leaf.getState().getAt(i,j);
+        for (int col = 0; col < leaf.getState().getWidth(); col++) {
+            for (int row = 0; row < leaf.getState().getHeight(); row++) {
+                occupies = leaf.getState().getAt(col,row);
                 if (occupies == player) {
                     playerStreak += 1;
                     enemyStreak = 0;
