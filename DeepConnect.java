@@ -52,19 +52,28 @@ public class DeepConnect extends AIModule {
      * @return returns the passed in node
      */
 
-    // Should this be void? buildTree returns a node, but it doesn't
-    // assign anything to a Node variable in getNextMove().
     public Node buildTree(Node tree, int levels) {
         if (levels == 0) {
             return tree;
         }
         GameStateModule stateCopy;
         // NOTE: won't always be 7 children made per node; need to have a break somewhere
-        // for special cases like when a child node happens to have a game over board state;
-        // in that case, that node should have no children, as it is a leaf node.
+        // for special cases like when a child node happens to have a game over board state
+        // before exhausting the depth entirely. in that case, that node should have no children.
         for (int i = 0; i < tree.getState().getWidth(); i++) {
             stateCopy = tree.getState().copy();
-            try {
+
+            if (tree.getState().isGameOver()) {
+                break; // don't bother making children for this node
+            }
+            if (!tree.getState().canMakeMove(i)) {
+                continue; // ignore making impossible children nodes
+            }
+            stateCopy.makeMove(i);
+            Node newChild = new Node(stateCopy);
+            tree.addChild(newChild);
+
+         /* try {
                 stateCopy.makeMove(i);
                 Node newChild = new Node(stateCopy);
                 tree.addChild(newChild);
@@ -72,7 +81,7 @@ public class DeepConnect extends AIModule {
             catch (Exception e) {
                 //Do something fun
                 ;
-            }
+            } */
         }
         for (int i = 0; i < tree.getChildren().size(); i++) {
             tree.getChildren().set(i, buildTree(tree.getChildren().get(i), levels-1));
@@ -140,7 +149,7 @@ public class DeepConnect extends AIModule {
                 return -1; // enemy won, so discourage taking this path!
             }
             else {
-                return 0; // draw
+                return 0; // draw; the board is filled
             }
         }
 
