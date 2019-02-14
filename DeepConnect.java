@@ -391,6 +391,7 @@ class Tree {
 class Node {
     private Integer score;
     private GameStateModule state;
+    private Node parent;
     private ArrayList<Node> children;
 
     Node() {
@@ -400,6 +401,12 @@ class Node {
     Node(final GameStateModule newState) {
         score = 0;
         state = newState;
+        children = new ArrayList<Node>();
+    }
+    Node(Node newParent, final GameStateModule newState) {
+        score = 0;
+        state = newState;
+        parent = newParent;
         children = new ArrayList<Node>();
     }
 
