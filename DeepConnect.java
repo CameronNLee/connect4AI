@@ -116,8 +116,29 @@ public class DeepConnect extends AIModule {
 
     // based on a leaf node's board state, determine the payoff
     public int calculatePayoff(Node leaf) {
-        /* do stuff here */
-        return 0; // placeholder
+
+        // case 1: leaf contains a board state who's game is over.
+        // So, determine who the winner is, and assign payoffs based on that.
+        if (leaf.getState().isGameOver()) {
+            if (leaf.getState().getWinner() == player) {
+                return 1;
+            }
+            else if (leaf.getState().getWinner() == enemy){
+                return -1; // enemy won, so discourage taking this path!
+            }
+            else {
+                return 0; // draw
+            }
+        }
+
+        // case 2: game isn't over yet. Predict what the best payoffs are
+        // based on how many potential 4-in-a-rows could exist for player,
+        // versus how many potential 4-in-a-rows could exist for enemy.
+
+        // if leaf's board state has it so that there are more 4-in-a-rows for enemy
+        // than there are 4-in-a-rows for player, then assign negative payoff.
+        return determineIfWinningOrLosingState(leaf);
+
     }
 
     public int determineIfWinningOrLosingState(Node leaf) {
@@ -266,6 +287,8 @@ public class DeepConnect extends AIModule {
             playerStreak = 0;
             enemyStreak = 0;
         }
+
+        // right to left
 
         // top-right to bottom-left, moving down the columns
         for (int colBegin = maxCol-2; colBegin >= 3; colBegin--) {
