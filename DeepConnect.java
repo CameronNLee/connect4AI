@@ -418,7 +418,7 @@ class Node {
         return children;
     }
     public Integer getScore() {
-        return this.score;
+        return score;
     }
     public GameStateModule getState() {
         return state;
