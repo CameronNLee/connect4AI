@@ -69,8 +69,8 @@ public class DeepConnect extends AIModule {
             if (!stateCopy.canMakeMove(col)) {
                 continue; // ignore making impossible children nodes
             }
-            Node newChild = new Node(stateCopy);
             stateCopy.makeMove(col);
+            Node newChild = new Node(col, stateCopy);
             root.addChild(newChild);
 
          /* try {
@@ -93,17 +93,15 @@ public class DeepConnect extends AIModule {
     // NOTE: perhaps not if player1 is human while player2 is AI
     // maybe have a check somehow if player1 is an AI player or not.
     public int minimaxValue(Node treeNode) {
-        Node child;
         int value = Integer.MIN_VALUE;
         int finalMove = 0;
         // cycle through every child of current board state
         // and run getMinValue on all of them, then finally
         // taking the Max value of all the min values.
-        for (int colIndex = 0; colIndex < treeNode.getChildren().size(); ++colIndex) {
-            child = treeNode.getChildren().get(colIndex);
+        for (Node child : treeNode.getChildren()) {
             int tempValue = Math.max(value, getMinValue(child));
             if (tempValue > value) {
-                finalMove = colIndex; // where to ultimately drop the coin
+                finalMove = child.getCol(); // where to ultimately drop the coin
                 value = tempValue;
             }
         }
@@ -394,12 +392,14 @@ class Tree {
 
 class Node {
     private Integer score;
+    private Integer col;
     private GameStateModule state;
     private Node parent;
     private ArrayList<Node> children;
 
     Node() {
         score = 0;
+        col = -1;
         children = new ArrayList<Node>();
     }
     Node(final GameStateModule newState) {
@@ -408,7 +408,9 @@ class Node {
         children = new ArrayList<Node>();
     }
     Node(Node newParent, final GameStateModule newState) {
+    Node(Integer column, final GameStateModule newState) {
         score = 0;
+        col = column;
         state = newState;
         parent = newParent;
         children = new ArrayList<Node>();
@@ -420,6 +422,9 @@ class Node {
 
     public ArrayList<Node> getChildren() {
         return children;
+    }
+    public Integer getCol() {
+        return col;
     }
     public Integer getScore() {
         return score;
