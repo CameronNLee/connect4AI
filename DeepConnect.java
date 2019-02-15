@@ -35,12 +35,6 @@ public class DeepConnect extends AIModule {
             enemy = 1;
         }
 
-        for(int i = 0; i < game.getWidth(); i++) {
-            if(root.getState().canMakeMove(i)) {
-                chosenMove = i;
-                break;
-            }
-        }
         chosenMove = minimaxValue(root);
     }
 
