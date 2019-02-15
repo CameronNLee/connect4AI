@@ -154,9 +154,9 @@ public class DeepConnect extends AIModule {
 
     public int determineStreaks(Node leaf) {
         int streakBalance = 0;
-        streakBalance += determineHorizontalStreaks(leaf, 3);
-        streakBalance += determineVerticalStreaks(leaf, 3);
-        streakBalance += determineDiagonalStreaks(leaf, 3);
+        streakBalance += determineHorizontalStreaks(leaf, 2);
+        streakBalance += determineVerticalStreaks(leaf, 2);
+        streakBalance += determineDiagonalStreaks(leaf, 2);
         return streakBalance;
     }
 
