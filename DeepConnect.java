@@ -148,24 +148,16 @@ public class DeepConnect extends AIModule {
 
         // if leaf's board state has it so that there are more 4-in-a-rows for enemy
         // than there are 4-in-a-rows for player, then assign negative payoff.
-        return determineStreaks(leaf);
-
+        score += determineStreaks(leaf);
+        return score; 
     }
 
     public int determineStreaks(Node leaf) {
-        int win = determineIfHorizontalStreak(leaf, 3);
-        if (win > 0) {
-            return win;
-        }
-        win = determineIfVerticalStreak(leaf, 3);
-        if (win > 0) {
-            return win;
-        }
-        win = determineIfDiagonalStreak(leaf, 3);
-        if (win > 0) {
-            return win;
-        }
-        return 0;
+        int streakBalance = 0;
+        streakBalance += determineHorizontalStreaks(leaf, 3);
+        streakBalance += determineVerticalStreaks(leaf, 3);
+        streakBalance += determineDiagonalStreaks(leaf, 3);
+        return streakBalance;
     }
 
     // maybe convert this to check both horizontal and vertical 3 in a row
