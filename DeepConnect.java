@@ -60,17 +60,17 @@ public class DeepConnect extends AIModule {
         // NOTE: won't always be 7 children made per node; need to have a break somewhere
         // for special cases like when a child node happens to have a game over board state
         // before exhausting the depth entirely. in that case, that node should have no children.
-        for (int i = 0; i < root.getState().getWidth(); i++) {
+        for (int col = 0; col < root.getState().getWidth(); col++) {
             stateCopy = root.getState().copy();
 
             if (stateCopy.isGameOver()) {
                 break; // don't bother making children for this node
             }
-            if (!stateCopy.canMakeMove(i)) {
+            if (!stateCopy.canMakeMove(col)) {
                 continue; // ignore making impossible children nodes
             }
-            stateCopy.makeMove(i);
             Node newChild = new Node(stateCopy);
+            stateCopy.makeMove(col);
             root.addChild(newChild);
 
          /* try {
