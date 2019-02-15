@@ -34,7 +34,6 @@ public class DeepConnect extends AIModule {
         else {
             enemy = 1;
         }
-
         chosenMove = minimaxValue(root);
     }
 
@@ -99,7 +98,8 @@ public class DeepConnect extends AIModule {
                 value = tempValue;
             }
         }
-        return finalMove; // placeholder
+        System.out.println(value);
+        return finalMove;
     }
 
     public int getMaxValue(Node currentNode) {
@@ -149,7 +149,7 @@ public class DeepConnect extends AIModule {
         // if leaf's board state has it so that there are more 4-in-a-rows for enemy
         // than there are 4-in-a-rows for player, then assign negative payoff.
         score += determineStreaks(leaf);
-        return score; 
+        return score;
     }
 
     public int determineStreaks(Node leaf) {
