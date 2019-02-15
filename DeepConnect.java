@@ -369,27 +369,6 @@ public class DeepConnect extends AIModule {
     }
 }
 
-class Tree {
-    private Node root;
-    // is this a good idea?
-    private ArrayList<Node> leaves;
-
-    Tree(Node newRoot) {
-        root = newRoot;
-        leaves = new ArrayList<Node>();
-    }
-
-    //If we store leaves, do we need a DFS?
-    //How should we gather the leaves?
-    public void DFS() {
-        for (Node child : root.getChildren()) {
-            if (child.isLeafNode()) {
-                
-            }
-        }
-    }
-}
-
 class Node {
     private Integer score;
     private Integer col;
