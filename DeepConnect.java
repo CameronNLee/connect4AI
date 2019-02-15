@@ -130,18 +130,15 @@ public class DeepConnect extends AIModule {
 
     // based on a leaf node's board state, determine the payoff
     public int calculatePayoff(Node leaf) {
-
+        int score = 0;
         // case 1: leaf contains a board state who's game is over.
         // So, determine who the winner is, and assign payoffs based on that.
         if (leaf.getState().isGameOver()) {
             if (leaf.getState().getWinner() == player) {
-                return 1;
+                score += 10;
             }
             else if (leaf.getState().getWinner() == enemy){
-                return -1; // enemy won, so discourage taking this path!
-            }
-            else {
-                return 0; // draw; the board is filled
+                score -= 10; // enemy won, so discourage taking this path!
             }
         }
 
