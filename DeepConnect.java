@@ -373,7 +373,6 @@ class Node {
     private Integer score;
     private Integer col;
     private GameStateModule state;
-    private Node parent;
     private ArrayList<Node> children;
 
     Node() {
@@ -386,12 +385,10 @@ class Node {
         state = newState;
         children = new ArrayList<Node>();
     }
-    Node(Node newParent, final GameStateModule newState) {
     Node(Integer column, final GameStateModule newState) {
         score = 0;
         col = column;
         state = newState;
-        parent = newParent;
         children = new ArrayList<Node>();
     }
 
