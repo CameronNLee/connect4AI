@@ -207,9 +207,11 @@ public class DeepConnect extends AIModule {
         return (totalPlayerStreaks - totalEnemyStreaks);
     }
 
-    public int determineIfVerticalStreak(Node leaf, int totalStreak) {
+    public int determineVerticalStreaks(Node leaf, int totalStreak) {
         int playerStreak = 0;
         int enemyStreak = 0;
+        int totalPlayerStreaks = 0;
+        int totalEnemyStreaks = 0;
         int occupies = 0;
 
         for (int col = 0; col < leaf.getState().getWidth(); col++) {
@@ -228,16 +230,16 @@ public class DeepConnect extends AIModule {
                     enemyStreak = 0;
                 }
                 if (playerStreak == totalStreak) {
-                    return player;
+                    totalPlayerStreaks += 1;
                 }
                 else if (enemyStreak == totalStreak) {
-                    return enemy;
+                    totalEnemyStreaks += 1;
                 }
             }
             playerStreak = 0;
             enemyStreak = 0;
         }
-        return 0;
+        return (totalPlayerStreaks - totalEnemyStreaks);
     }
 
     public int determineIfDiagonalStreak(Node leaf, int totalStreak) {
