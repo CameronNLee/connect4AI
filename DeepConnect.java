@@ -164,8 +164,6 @@ public class DeepConnect extends AIModule {
 
     // maybe convert this to check both horizontal and vertical 3 in a row
     // states (or the vertical determine) later and see if there is a speed boost at all.
-    // can use for 3 in a row
-    // Maybe convert to count number of streaks?
     public int determineHorizontalStreaks(Node leaf, int totalStreak) {
         int playerStreak = 0;
         int enemyStreak = 0;
@@ -184,17 +182,21 @@ public class DeepConnect extends AIModule {
                     enemyStreak += 1;
                     playerStreak = 0;
                 }
-                else { // blank spots should be potential. Maybe don't set to 0?
-                    /*playerStreak = 0;
-                    enemyStreak = 0;*/
-                    ++playerStreak;
-                    ++enemyStreak;
+                else {
+                    if (playerStreak > 0) {
+                        playerStreak += 1;
+                    }
+                    else if (enemyStreak > 0) {
+                        enemyStreak += 1;
+                    }
                 }
                 if (playerStreak >= totalStreak) {
                     totalPlayerStreaks += 1;
+                    playerStreak = 0;
                 }
                 if (enemyStreak >= totalStreak) {
                     totalEnemyStreaks += 1;
+                    enemyStreak = 0;
                 }
             }
             playerStreak = 0;
@@ -222,17 +224,20 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                 }
                 else {
-                    /*playerStreak = 0;
-                    enemyStreak = 0; */
-
-                    ++playerStreak;
-                    ++enemyStreak;
+                    if (playerStreak > 0) {
+                        playerStreak += 1;
+                    }
+                    else if (enemyStreak > 0) {
+                        enemyStreak += 1;
+                    }
                 }
                 if (playerStreak == totalStreak) {
                     totalPlayerStreaks += 1;
+                    playerStreak = 0;
                 }
                 if (enemyStreak == totalStreak) {
                     totalEnemyStreaks += 1;
+                    enemyStreak = 0;
                 }
             }
             playerStreak = 0;
