@@ -172,9 +172,11 @@ public class DeepConnect extends AIModule {
     // states (or the vertical determine) later and see if there is a speed boost at all.
     // can use for 3 in a row
     // Maybe convert to count number of streaks?
-    public int determineIfHorizontalStreak(Node leaf, int totalStreak) {
+    public int determineHorizontalStreaks(Node leaf, int totalStreak) {
         int playerStreak = 0;
         int enemyStreak = 0;
+        int totalPlayerStreaks = 0;
+        int totalEnemyStreaks = 0;
         int occupies = 0;
 
         for (int row = 0; row < leaf.getState().getHeight(); row++) {
@@ -193,16 +195,16 @@ public class DeepConnect extends AIModule {
                     enemyStreak = 0;
                 }
                 if (playerStreak == totalStreak) {
-                    return player;
+                    totalPlayerStreaks += 1;
                 }
                 else if (enemyStreak == totalStreak) {
-                    return enemy;
+                    totalEnemyStreaks += 1;
                 }
             }
             playerStreak = 0;
             enemyStreak = 0;
         }
-        return 0;
+        return (totalPlayerStreaks - totalEnemyStreaks);
     }
 
     public int determineIfVerticalStreak(Node leaf, int totalStreak) {
