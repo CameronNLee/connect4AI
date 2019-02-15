@@ -87,7 +87,6 @@ public class DeepConnect extends AIModule {
                 value = tempValue;
             }
         }
-        System.out.println(value);
         return finalMove;
     }
 
