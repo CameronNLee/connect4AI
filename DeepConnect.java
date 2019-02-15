@@ -156,9 +156,9 @@ public class DeepConnect extends AIModule {
 
     public int determineStreaks(Node leaf) {
         int streakBalance = 0;
-        streakBalance += determineHorizontalStreaks(leaf, 2);
-        streakBalance += determineVerticalStreaks(leaf, 2);
-        streakBalance += determineDiagonalStreaks(leaf, 2);
+        streakBalance += determineHorizontalStreaks(leaf, 4);
+        streakBalance += determineVerticalStreaks(leaf, 4);
+        streakBalance += determineDiagonalStreaks(leaf, 4);
         return streakBalance;
     }
 
@@ -185,13 +185,15 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                 }
                 else { // blank spots should be potential. Maybe don't set to 0?
-                    playerStreak = 0;
-                    enemyStreak = 0;
+                    /*playerStreak = 0;
+                    enemyStreak = 0;*/
+                    ++playerStreak;
+                    ++enemyStreak;
                 }
-                if (playerStreak == totalStreak) {
+                if (playerStreak >= totalStreak) {
                     totalPlayerStreaks += 1;
                 }
-                else if (enemyStreak == totalStreak) {
+                if (enemyStreak >= totalStreak) {
                     totalEnemyStreaks += 1;
                 }
             }
@@ -220,13 +222,16 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                 }
                 else {
-                    playerStreak = 0;
-                    enemyStreak = 0;
+                    /*playerStreak = 0;
+                    enemyStreak = 0; */
+
+                    ++playerStreak;
+                    ++enemyStreak;
                 }
                 if (playerStreak == totalStreak) {
                     totalPlayerStreaks += 1;
                 }
-                else if (enemyStreak == totalStreak) {
+                if (enemyStreak == totalStreak) {
                     totalEnemyStreaks += 1;
                 }
             }
@@ -260,13 +265,15 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                 }
                 else {
-                    playerStreak = 0;
-                    enemyStreak = 0;
+                    /*playerStreak = 0;
+                    enemyStreak = 0;*/
+                    ++playerStreak;
+                    ++enemyStreak;
                 }
                 if (playerStreak == totalStreak) {
                     totalPlayerStreaks += 1;
                 }
-                else if (enemyStreak == totalStreak) {
+                if (enemyStreak == totalStreak) {
                     totalEnemyStreaks += 1;
                 }
             }
@@ -287,13 +294,15 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                 }
                 else {
-                    playerStreak = 0;
-                    enemyStreak = 0;
+                    /*playerStreak = 0;
+                    enemyStreak = 0;*/
+                    ++playerStreak;
+                    ++enemyStreak;
                 }
                 if (playerStreak == totalStreak) {
                     totalPlayerStreaks += 1;
                 }
-                else if (enemyStreak == totalStreak) {
+                if (enemyStreak == totalStreak) {
                     totalEnemyStreaks += 1;
                 }
             }
@@ -316,13 +325,15 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                 }
                 else {
-                    playerStreak = 0;
-                    enemyStreak = 0;
+                    /*playerStreak = 0;
+                    enemyStreak = 0;*/
+                    ++playerStreak;
+                    ++enemyStreak;
                 }
                 if (playerStreak == totalStreak) {
                     totalPlayerStreaks += 1;
                 }
-                else if (enemyStreak == totalStreak) {
+                if (enemyStreak == totalStreak) {
                     totalEnemyStreaks += 1;
                 }
             }
@@ -343,13 +354,15 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                 }
                 else {
-                    playerStreak = 0;
-                    enemyStreak = 0;
+                    /*playerStreak = 0;
+                    enemyStreak = 0;*/
+                    ++playerStreak;
+                    ++enemyStreak;
                 }
                 if (playerStreak == totalStreak) {
                     totalPlayerStreaks += 1;
                 }
-                else if (enemyStreak == totalStreak) {
+                if (enemyStreak == totalStreak) {
                     totalEnemyStreaks += 1;
                 }
             }
