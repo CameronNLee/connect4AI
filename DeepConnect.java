@@ -40,7 +40,7 @@ public class DeepConnect extends AIModule {
     /**
      * Recurisvely build the game tree down to the specified depth.
      *
-     * @param tree The current board state when this AI's getNextMove() is called
+     * @param root The current board state when this AI's getNextMove() is called
      * @param levels The depth
      * @return returns the passed in node
      */
@@ -63,7 +63,7 @@ public class DeepConnect extends AIModule {
                 continue; // ignore making impossible children nodes
             }
             stateCopy.makeMove(col);
-            Node newChild = new Node(col, stateCopy);
+            Node newChild = new Node(col, levels-1, stateCopy);
             root.addChild(newChild);
 
          /* try {
@@ -138,7 +138,7 @@ public class DeepConnect extends AIModule {
                 score += 10;
             }
             else if (leaf.getState().getWinner() == enemy){
-                score -= 10; // enemy won, so discourage taking this path!
+                score = -10; // enemy won, so discourage taking this path!
             }
         }
 
@@ -148,7 +148,9 @@ public class DeepConnect extends AIModule {
 
         // if leaf's board state has it so that there are more 4-in-a-rows for enemy
         // than there are 4-in-a-rows for player, then assign negative payoff.
-        score += determineStreaks(leaf);
+        else {
+            score += determineStreaks(leaf);
+        }
         return score;
     }
 
@@ -182,7 +184,7 @@ public class DeepConnect extends AIModule {
                     enemyStreak += 1;
                     playerStreak = 0;
                 }
-                else {
+                else { // blank spots should be potential. Maybe don't set to 0?
                     playerStreak = 0;
                     enemyStreak = 0;
                 }
@@ -361,22 +363,26 @@ public class DeepConnect extends AIModule {
 class Node {
     private Integer score;
     private Integer col;
+    private Integer depth;
     private GameStateModule state;
     private ArrayList<Node> children;
 
     Node() {
         score = 0;
         col = -1;
+        depth = -1;
         children = new ArrayList<Node>();
     }
     Node(final GameStateModule newState) {
         score = 0;
+        depth = 6;
         state = newState;
         children = new ArrayList<Node>();
     }
-    Node(Integer column, final GameStateModule newState) {
+    Node(Integer column, Integer level, final GameStateModule newState) {
         score = 0;
         col = column;
+        depth = level;
         state = newState;
         children = new ArrayList<Node>();
     }
@@ -390,6 +396,9 @@ class Node {
     }
     public Integer getCol() {
         return col;
+    }
+    public Integer getDepth() {
+        return depth;
     }
     public Integer getScore() {
         return score;
