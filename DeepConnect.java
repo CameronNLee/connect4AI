@@ -2,13 +2,13 @@
 
 import java.util.ArrayList;
 
-/// Sample AI module that picks the first legal move.
+/// Minimax AI module that picks moves after looking 6 levels down the game tree.
 /**
- * This AI chooses the leftmost column. It is meant to illustrate the basics of how to
- * use the AIModule and GameStateModule classes.
- *
- * Since this terminates in under a millisecond, there is no reason to check for
- * the terminate flag.  However, your AI needs to check for the terminate flag.
+ * This AI chooses columns to drop coins into based on the minimax algorithm.
+ * The AI, given a game state's board configuration, creates a game tree that
+ * looks at most 6 levels down from that game state. It then uses minimax
+ * to search through the game tree, and picks the column index with the highest
+ * payoff after propagating payoffs up the tree recursively.
  *
  * @author Scott Madera
  * @author Cameron Lee
@@ -42,39 +42,24 @@ public class DeepConnect extends AIModule {
      *
      * @param root The current board state when this AI's getNextMove() is called
      * @param levels The depth
-     * @return returns the passed in node
+     * @return returns the passed in node (base case condition)
      */
-
     public Node buildTree(Node root, int levels) {
-        if (levels == 0) {
+        if (levels == 0) { // base case
             return root;
         }
         GameStateModule stateCopy;
-        // NOTE: won't always be 7 children made per node; need to have a break somewhere
-        // for special cases like when a child node happens to have a game over board state
-        // before exhausting the depth entirely. in that case, that node should have no children.
         for (int col = 0; col < root.getState().getWidth(); col++) {
             stateCopy = root.getState().copy();
-
             if (stateCopy.isGameOver()) {
-                break; // don't bother making children for this node
+                break; // i.e. don't bother making children for this node
             }
             if (!stateCopy.canMakeMove(col)) {
-                continue; // ignore making impossible children nodes
+                continue; // i.e. ignore making impossible children nodes
             }
             stateCopy.makeMove(col);
-            Node newChild = new Node(col, levels-1, stateCopy);
+            Node newChild = new Node(col, stateCopy);
             root.addChild(newChild);
-
-         /* try {
-                stateCopy.makeMove(i);
-                Node newChild = new Node(stateCopy);
-                tree.addChild(newChild);
-            }
-            catch (Exception e) {
-                //Do something fun
-                ;
-            } */
         }
         for (int i = 0; i < root.getChildren().size(); i++) {
             root.getChildren().set(i, buildTree(root.getChildren().get(i), levels-1));
@@ -82,9 +67,13 @@ public class DeepConnect extends AIModule {
         return root;
     }
 
-    // assumption: max player is always the first player
-    // NOTE: perhaps not if player1 is human while player2 is AI
-    // maybe have a check somehow if player1 is an AI player or not.
+    /**
+     * Kickstarts the minimax algorithm by traveling through the tree,
+     * using the passed in game state as the "root".
+     *
+     * @param treeNode The current board state when this AI's getNextMove() is called
+     * @return The column index with the highest payoff value.
+     */
     public int minimaxValue(Node treeNode) {
         int value = Integer.MIN_VALUE;
         int finalMove = 0;
@@ -128,7 +117,13 @@ public class DeepConnect extends AIModule {
         return utilityValue;
     }
 
-    // based on a leaf node's board state, determine the payoff
+    /**
+     * Based on a leaf node's board state, determine the payoff.
+     *
+     * @param leaf A leaf of the created tree, i.e. a node with a game over board
+     *             state, or a node who has reached the final depth level.
+     * @return The calculated payoff or utility value associated with the leaf.
+     */
     public int calculatePayoff(Node leaf) {
         int score = 0;
         // case 1: leaf contains a board state who's game is over.
@@ -141,19 +136,24 @@ public class DeepConnect extends AIModule {
                 score = -10; // enemy won, so discourage taking this path!
             }
         }
-
-        // case 2: game isn't over yet. Predict what the best payoffs are
-        // based on how many potential 4-in-a-rows could exist for player,
-        // versus how many potential 4-in-a-rows could exist for enemy.
-
-        // if leaf's board state has it so that there are more 4-in-a-rows for enemy
-        // than there are 4-in-a-rows for player, then assign negative payoff.
+        // case 2: game isn't over yet. Call the evaluation function.
         else {
             score += determineStreaks(leaf);
         }
         return score;
     }
 
+    /**
+     * Evaluation function that determines payoffs for non-GameOver leaf nodes.
+     * It analyzes leaf's board state and determines how many possible 4-in-a-rows
+     * (called "streaks" in our functions) both player and enemy can make based on
+     * that given board state. It does this by separately calculating number of
+     * horizontal streaks, number of vertical streaks, and number of diagonal streaks.
+     *
+     * @param leaf A leaf of the created tree, i.e. a node with a game over board
+     *             state, or a node who has reached the final depth level.
+     * @return The payoff generated by the difference between streak totals.
+     */
     public int determineStreaks(Node leaf) {
         int streakBalance = 0;
         streakBalance += determineHorizontalStreaks(leaf, 4);
@@ -162,8 +162,6 @@ public class DeepConnect extends AIModule {
         return streakBalance;
     }
 
-    // maybe convert this to check both horizontal and vertical 3 in a row
-    // states (or the vertical determine) later and see if there is a speed boost at all.
     public int determineHorizontalStreaks(Node leaf, int totalStreak) {
         int playerStreak = 0;
         int enemyStreak = 0;
@@ -270,8 +268,6 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                 }
                 else {
-                    /*playerStreak = 0;
-                    enemyStreak = 0;*/
                     ++playerStreak;
                     ++enemyStreak;
                 }
@@ -299,8 +295,6 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                 }
                 else {
-                    /*playerStreak = 0;
-                    enemyStreak = 0;*/
                     ++playerStreak;
                     ++enemyStreak;
                 }
@@ -330,8 +324,6 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                 }
                 else {
-                    /*playerStreak = 0;
-                    enemyStreak = 0;*/
                     ++playerStreak;
                     ++enemyStreak;
                 }
@@ -359,8 +351,6 @@ public class DeepConnect extends AIModule {
                     playerStreak = 0;
                 }
                 else {
-                    /*playerStreak = 0;
-                    enemyStreak = 0;*/
                     ++playerStreak;
                     ++enemyStreak;
                 }
@@ -377,30 +367,28 @@ public class DeepConnect extends AIModule {
         return (totalPlayerStreaks - totalEnemyStreaks);
     }
 }
-
+/// A class that associates game states to nodes in a game tree.
+/**
+ * Node associates a created board state configuration to its
+ * GameStateModule object member. This is to facilitate creation of the
+ * game tree, which is essential for our implementation of minimax.
+ *
+ */
 class Node {
-    private Integer score;
     private Integer col;
-    private Integer depth;
     private GameStateModule state;
     private ArrayList<Node> children;
 
     Node() {
-        score = 0;
         col = -1;
-        depth = -1;
         children = new ArrayList<Node>();
     }
     Node(final GameStateModule newState) {
-        score = 0;
-        depth = 6;
         state = newState;
         children = new ArrayList<Node>();
     }
-    Node(Integer column, Integer level, final GameStateModule newState) {
-        score = 0;
+    Node(Integer column, final GameStateModule newState) {
         col = column;
-        depth = level;
         state = newState;
         children = new ArrayList<Node>();
     }
@@ -415,12 +403,6 @@ class Node {
     public Integer getCol() {
         return col;
     }
-    public Integer getDepth() {
-        return depth;
-    }
-    public Integer getScore() {
-        return score;
-    }
     public GameStateModule getState() {
         return state;
     }
@@ -432,10 +414,6 @@ class Node {
         else {
             return false;
         }
-    }
-
-    public void setScore(int scoreIn) {
-        this.score = scoreIn;
     }
     public void setState(GameStateModule stateIn) {
         this.state = stateIn;
