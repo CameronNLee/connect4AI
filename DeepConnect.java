@@ -24,9 +24,10 @@ public class DeepConnect extends AIModule {
     }
 
     public void getNextMove(final GameStateModule game) {
+        int alpha = Integer.MIN_VALUE;
+        int beta = Integer.MAX_VALUE;
         Node root = new Node(game);
         buildTree(root, 6);
-
         player = game.getActivePlayer();
         if (player == 1) {
             enemy = 2;
@@ -34,7 +35,7 @@ public class DeepConnect extends AIModule {
         else {
             enemy = 1;
         }
-        chosenMove = minimaxValue(root);
+        chosenMove = minimaxValue(root, alpha, beta);
     }
 
     /**
@@ -74,14 +75,14 @@ public class DeepConnect extends AIModule {
      * @param treeNode The current board state when this AI's getNextMove() is called
      * @return The column index with the highest payoff value.
      */
-    public int minimaxValue(Node treeNode) {
+    public int minimaxValue(Node treeNode, int alpha, int beta) {
         int value = Integer.MIN_VALUE;
         int finalMove = 0;
         // cycle through every child of current board state
         // and run getMinValue on all of them, then finally
         // taking the Max value of all the min values.
         for (Node child : treeNode.getChildren()) {
-            int tempValue = Math.max(value, getMinValue(child));
+            int tempValue = Math.max(value, getMinValue(child, alpha, beta));
             if (tempValue > value) {
                 finalMove = child.getCol(); // where to ultimately drop the coin
                 value = tempValue;
@@ -90,7 +91,7 @@ public class DeepConnect extends AIModule {
         return finalMove;
     }
 
-    public int getMaxValue(Node currentNode) {
+    public int getMaxValue(Node currentNode, int alpha, int beta) {
         // terminal state check
         if (currentNode.isLeafNode()) {
             return calculatePayoff(currentNode);
@@ -99,11 +100,15 @@ public class DeepConnect extends AIModule {
         Node child;
         for (int i = 0; i < currentNode.getChildren().size(); ++i) {
             child = currentNode.getChildren().get(i);
-            utilityValue = Math.max(utilityValue, getMinValue(child));
+            utilityValue = Math.max(utilityValue, getMinValue(child, alpha, beta));
+            if (utilityValue >= beta) {
+                return utilityValue;
+            }
+            alpha = Math.max(alpha, utilityValue);
         }
         return utilityValue;
     }
-    public int getMinValue(Node currentNode) {
+    public int getMinValue(Node currentNode, int alpha, int beta) {
         if (currentNode.isLeafNode()) {
             return calculatePayoff(currentNode);
         }
@@ -111,7 +116,11 @@ public class DeepConnect extends AIModule {
         Node child;
         for (int i = 0; i < currentNode.getChildren().size(); ++i) {
             child = currentNode.getChildren().get(i);
-            utilityValue = Math.min(utilityValue, getMaxValue(child));
+            utilityValue = Math.min(utilityValue, getMaxValue(child, alpha, beta));
+            if (utilityValue <= alpha) {
+                return utilityValue;
+            }
+            beta = Math.min(beta, utilityValue);
         }
         return utilityValue;
     }
