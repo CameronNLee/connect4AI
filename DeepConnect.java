@@ -33,8 +33,8 @@ public class DeepConnect extends AIModule {
         int alpha = Integer.MIN_VALUE;
         int beta = Integer.MAX_VALUE;
         Node root = new Node(game);
-        Evaluation strategy = Evaluation.MAX;
-        buildTree(root, 6, strategy);
+        //Evaluation strategy = Evaluation.MAX;
+        //buildTree(root, 6, strategy);
         player = game.getActivePlayer();
         if (player == 1) {
             enemy = 2;
@@ -42,7 +42,7 @@ public class DeepConnect extends AIModule {
         else {
             enemy = 1;
         }
-        chosenMove = minimaxValue(root, alpha, beta);
+        chosenMove = alphaBeta(root, 6, alpha, beta);
     }
 
     /**
@@ -52,9 +52,11 @@ public class DeepConnect extends AIModule {
      * @param levels The depth
      * @return returns the passed in node (base case condition)
      */
-    public Node buildTree(Node root, int levels, Evaluation strategy) {
-        if (levels == 0) { // base case
-            root.setUtility(calculatePayoff(root));
+    /*
+    public Integer buildTree(Node root, int levels, Evaluation strategy) {
+        if (levels == 0) { // at leaf level
+            return calculatePayoff(root);
+            /*
             if (strategy == Evaluation.MAX) {
                 if (root.getUtility() <= root.getParent().getBeta()) {
                     root.getParent().setBeta(root.getUtility());
@@ -66,6 +68,8 @@ public class DeepConnect extends AIModule {
                 }
             }
             return root;
+            */
+    /*
         }
         GameStateModule stateCopy;
         for (int col = 0; col < root.getState().getWidth(); col++) {
@@ -83,6 +87,7 @@ public class DeepConnect extends AIModule {
         }
         return root;
     }
+    */
 
     /**
      * Kickstarts the minimax algorithm by traveling through the tree,
@@ -91,55 +96,63 @@ public class DeepConnect extends AIModule {
      * @param treeNode The current board state when this AI's getNextMove() is called
      * @return The column index with the highest payoff value.
      */
-    public int minimaxValue(Node treeNode, int alpha, int beta) {
-        int value = Integer.MIN_VALUE;
-        int finalMove = 0;
-        // cycle through every child of current board state
-        // and run getMinValue on all of them, then finally
-        // taking the Max value of all the min values.
-        for (Node child : treeNode.getChildren()) {
-            int tempValue = Math.max(value, getMinValue(child, alpha, beta));
-            if (tempValue > value) {
-                finalMove = child.getCol(); // where to ultimately drop the coin
-                value = tempValue;
-            }
-        }
-        return finalMove;
+    public int alphaBeta(Node root, int level, int alpha, int beta) {
+        int value = maxValue(root, level-1, alpha, beta);
+        return value;
     }
 
-    public int getMaxValue(Node currentNode, int alpha, int beta) {
+    public int maxValue(Node currentNode, int level, int alpha, int beta) {
         // terminal state check
-        if (currentNode.isLeafNode()) {
+        if (level == 0) {
             return calculatePayoff(currentNode);
         }
-        int utilityValue = Integer.MIN_VALUE;
+        int value = Integer.MIN_VALUE;
         Node child;
-        for (int i = 0; i < currentNode.getChildren().size(); ++i) {
-            child = currentNode.getChildren().get(i);
-            utilityValue = Math.max(utilityValue, getMinValue(child, alpha, beta));
-            if (utilityValue >= beta) {
-                return utilityValue;
+        for (int col = 0; col < currentNode.getState().getWidth(); ++col) {
+            GameStateModule stateCopy = currentNode.getState().copy();
+            if (stateCopy.isGameOver()) {
+                break; // i.e. don't bother making children for this node
             }
-            alpha = Math.max(alpha, utilityValue);
+            if (!stateCopy.canMakeMove(col)) {
+                continue; // i.e. ignore making impossible children nodes
+            }
+            stateCopy.makeMove(col);
+            child = new Node(col, stateCopy, currentNode);
+            //currentNode.addChild(child);
+            value = Math.max(value, minValue(child, level-1,  alpha, beta));
+            if (value >= beta) {
+                return value;
+            }
+            alpha = Math.max(alpha, value);
         }
-        return utilityValue;
+        return value;
     }
 
-    public int getMinValue(Node currentNode, int alpha, int beta) {
-        if (currentNode.isLeafNode()) {
+    public int minValue(Node currentNode, int level, int alpha, int beta) {
+        // terminal state check
+        if (level == 0) {
             return calculatePayoff(currentNode);
         }
-        int utilityValue = Integer.MAX_VALUE;
+        int value = Integer.MAX_VALUE;
         Node child;
-        for (int i = 0; i < currentNode.getChildren().size(); ++i) {
-            child = currentNode.getChildren().get(i);
-            utilityValue = Math.min(utilityValue, getMaxValue(child, alpha, beta));
-            if (utilityValue <= alpha) {
-                return utilityValue;
+        for (int col = 0; col < currentNode.getState().getWidth(); ++col) {
+            GameStateModule stateCopy = currentNode.getState().copy();
+            if (stateCopy.isGameOver()) {
+                break; // i.e. don't bother making children for this node
             }
-            beta = Math.min(beta, utilityValue);
+            if (!stateCopy.canMakeMove(col)) {
+                continue; // i.e. ignore making impossible children nodes
+            }
+            stateCopy.makeMove(col);
+            child = new Node(col, stateCopy, currentNode);
+            //currentNode.addChild(child);
+            value = Math.min(value, maxValue(child, level-1,  alpha, beta));
+            if (value <= beta) {
+                return value;
+            }
+            alpha = Math.max(alpha, value);
         }
-        return utilityValue;
+        return value;
     }
 
     /**
