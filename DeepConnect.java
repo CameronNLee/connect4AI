@@ -61,6 +61,9 @@ public class DeepConnect extends AIModule {
             stateCopy.makeMove(col);
             Node newChild = new Node(col, stateCopy, root);
             root.addChild(newChild);
+            if (levels == 1) { // leaf node
+                newChild.setUtility(calculatePayoff(newChild));
+            }
             buildTree(newChild, levels-1);
         }
         return root;
