@@ -409,16 +409,22 @@ class Node {
     Node() {
         col = -1;
         children = new ArrayList<Node>();
+        alpha = Integer.MIN_VALUE;
+        beta = Integer.MAX_VALUE;
     }
     Node(final GameStateModule newState) {
         state = newState;
         children = new ArrayList<Node>();
+        alpha = Integer.MIN_VALUE;
+        beta = Integer.MAX_VALUE;
     }
     Node(Integer column, final GameStateModule newState, Node newParent) {
         col = column;
         state = newState;
         parent = newParent;
         children = new ArrayList<Node>();
+        alpha = Integer.MIN_VALUE;
+        beta = Integer.MAX_VALUE;
     }
 
     public void addChild(Node child) {
