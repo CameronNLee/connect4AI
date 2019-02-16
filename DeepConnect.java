@@ -70,6 +70,16 @@ public class DeepConnect extends AIModule {
             root.addChild(newChild);
             if (levels == 1) { // leaf node
                 newChild.setUtility(calculatePayoff(newChild));
+                if (strategy == Evaluation.MAX) {
+                    if (newChild.getUtility() <= newChild.getParent().getBeta()) {
+                        newChild.getParent().setBeta(newChild.getUtility());
+                    }
+                }
+                if (strategy == Evaluation.MIN) {
+                    if (newChild.getUtility() >= newChild.getParent().getAlpha()) {
+                        newChild.getParent().setAlpha(newChild.getUtility());
+                    }
+                }
             }
             if (strategy == Evaluation.MAX) {
                 strategy = Evaluation.MIN;
@@ -442,6 +452,9 @@ class Node {
     }
     public Integer getCol() {
         return col;
+    }
+    public Node getParent() {
+        return parent;
     }
     public GameStateModule getState() {
         return state;
