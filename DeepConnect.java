@@ -1,4 +1,4 @@
-// (c) Scott Madera, Cameron Lee, (add your name here)
+// (c) Scott Madera, Cameron Lee, Marshall Fan
 
 import java.util.ArrayList;
 
@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author Scott Madera
  * @author Cameron Lee
- * (add your name here)
+ * @author Marshall Fan
  */
 public class DeepConnect extends AIModule {
     private int player;
@@ -36,7 +36,7 @@ public class DeepConnect extends AIModule {
             enemy = 1;
         }
         // alphaBeta(root, 11);
-        chosenMove = alphaBeta(root, 7, alpha, beta);
+        chosenMove = alphaBeta(root, 8, alpha, beta);
     }
 
 
@@ -49,9 +49,9 @@ public class DeepConnect extends AIModule {
      */
     public int alphaBeta(Node treeNode, int depth, int alpha, int beta) {
         int value = Integer.MIN_VALUE;
-        int finalMove = 0;
+        int tempValue = Integer.MIN_VALUE;
+        int finalMove = -1;
         GameStateModule stateCopy;
-        int tempValue;
         Node newChild;
         for (int col = 0; col < treeNode.getState().getWidth(); ++col) {
             stateCopy = treeNode.getState().copy();
@@ -61,12 +61,11 @@ public class DeepConnect extends AIModule {
             stateCopy.makeMove(col);
             newChild = new Node(col, stateCopy);
             treeNode.addChild(newChild);
-            tempValue = Math.max(value, getMinValue(newChild, depth-1, alpha, beta));
+            tempValue = Math.max(tempValue, getMinValue(newChild, depth-1, alpha, beta));
             if (tempValue >= beta) {
                 return tempValue;
             }
             alpha = Math.max(alpha, tempValue);
-            // picking the column if we found a better score
             if (tempValue > value) {
                 finalMove = newChild.getCol(); // where to ultimately drop the coin
                 value = tempValue;
@@ -160,9 +159,12 @@ public class DeepConnect extends AIModule {
      */
     public int determineStreaks(Node leaf) {
         int streakBalance = 0;
-        streakBalance += determineHorizontalStreaks(leaf, 4);
-        streakBalance += determineVerticalStreaks(leaf, 4);
-        streakBalance += determineDiagonalStreaks(leaf, 4);
+        streakBalance += determineHorizontalStreaks(leaf, 3);
+        streakBalance += determineVerticalStreaks(leaf, 3);
+        streakBalance += determineDiagonalStreaks(leaf, 3);
+        //streakBalance += determineThreatHorizontal(leaf, 3);
+        //streakBalance += determineThreatVertical(leaf, 3);
+        //streakBalance += determineThreatDiagonal(leaf, 3);
         return streakBalance;
     }
 
@@ -275,10 +277,10 @@ public class DeepConnect extends AIModule {
                     ++playerStreak;
                     ++enemyStreak;
                 }
-                if (playerStreak == totalStreak) {
+                if (playerStreak >= totalStreak) {
                     totalPlayerStreaks += 1;
                 }
-                if (enemyStreak == totalStreak) {
+                if (enemyStreak >= totalStreak) {
                     totalEnemyStreaks += 1;
                 }
             }
@@ -302,10 +304,10 @@ public class DeepConnect extends AIModule {
                     ++playerStreak;
                     ++enemyStreak;
                 }
-                if (playerStreak == totalStreak) {
+                if (playerStreak >= totalStreak) {
                     totalPlayerStreaks += 1;
                 }
-                if (enemyStreak == totalStreak) {
+                if (enemyStreak >= totalStreak) {
                     totalEnemyStreaks += 1;
                 }
             }
@@ -316,7 +318,7 @@ public class DeepConnect extends AIModule {
         // right to left
 
         // top-right to bottom-left, moving down the columns
-        for (int colBegin = maxCol-2; colBegin >= 3; colBegin--) {
+        for (int colBegin = maxCol-1; colBegin >= 3; colBegin--) {
             for (int row = maxRow-1, col = colBegin; row >= 0 && col >= 0; row--, col--) {
                 occupies = leaf.getState().getAt(col,row);
                 if (occupies == player) {
@@ -331,10 +333,10 @@ public class DeepConnect extends AIModule {
                     ++playerStreak;
                     ++enemyStreak;
                 }
-                if (playerStreak == totalStreak) {
+                if (playerStreak >= totalStreak) {
                     totalPlayerStreaks += 1;
                 }
-                if (enemyStreak == totalStreak) {
+                if (enemyStreak >= totalStreak) {
                     totalEnemyStreaks += 1;
                 }
             }
@@ -358,11 +360,307 @@ public class DeepConnect extends AIModule {
                     ++playerStreak;
                     ++enemyStreak;
                 }
-                if (playerStreak == totalStreak) {
+                if (playerStreak >= totalStreak) {
                     totalPlayerStreaks += 1;
                 }
-                if (enemyStreak == totalStreak) {
+                if (enemyStreak >= totalStreak) {
                     totalEnemyStreaks += 1;
+                }
+            }
+            playerStreak = 0;
+            enemyStreak = 0;
+        }
+        return (totalPlayerStreaks - totalEnemyStreaks);
+    }
+
+    public int determineThreatHorizontal(Node leaf, int threatStreak) {
+        int playerStreak = 0;
+        int enemyStreak = 0;
+        int totalPlayerStreaks = 0;
+        int totalEnemyStreaks = 0;
+        int occupies = 0;
+
+        for (int row = 0; row < leaf.getState().getHeight(); row++) {
+            for (int col = 0; col < leaf.getState().getWidth(); col++) {
+                occupies = leaf.getState().getAt(col,row);
+                if (occupies == player) {
+                    playerStreak += 1;
+                    enemyStreak = 0;
+                }
+                else if (occupies == enemy) {
+                    enemyStreak += 1;
+                    playerStreak = 0;
+                }
+                else {
+                    ++playerStreak;
+                    ++enemyStreak;
+                }
+
+                if (playerStreak >= threatStreak) {
+                    int boundCheck = col+1;
+                    // P P P . <--- three in a row threat
+                    if (boundCheck < leaf.getState().getWidth()) {
+                        if (leaf.getState().getAt(col+1,row) == 0) {
+                            totalPlayerStreaks += 1;
+                        }
+                    }
+                    boundCheck = col-3;
+                    // . P P P <---- three in a row threat
+                    if (boundCheck >= 0) {
+                        if (leaf.getState().getAt(col-3,row) == 0) {
+                            totalPlayerStreaks += 1;
+                        }
+                    }
+                    playerStreak = 0;
+                }
+                if (enemyStreak >= threatStreak) {
+                    int boundCheck = col+1;
+                    // E E E . <--- three in a row threat
+                    if (boundCheck < leaf.getState().getWidth()) {
+                        if (leaf.getState().getAt(col+1,row) == 0) {
+                            totalEnemyStreaks += 1;
+                        }
+                    }
+                    boundCheck = col-3;
+                    // . E E E <---- three in a row threat
+                    if (boundCheck >= 0) {
+                        if (leaf.getState().getAt(col-3,row) == 0) {
+                            totalEnemyStreaks += 1;
+                        }
+                    }
+                    enemyStreak = 0;
+                }
+            }
+            playerStreak = 0;
+            enemyStreak = 0;
+        }
+        return (totalPlayerStreaks - totalEnemyStreaks);
+    }
+
+    public int determineThreatVertical(Node leaf, int threatStreak) {
+        int playerStreak = 0;
+        int enemyStreak = 0;
+        int totalPlayerStreaks = 0;
+        int totalEnemyStreaks = 0;
+        int occupies = 0;
+
+        for (int col = 0; col < leaf.getState().getWidth(); col++) {
+            for (int row = 0; row < leaf.getState().getHeight(); row++) {
+                occupies = leaf.getState().getAt(col,row);
+                if (occupies == player) {
+                    playerStreak += 1;
+                    enemyStreak = 0;
+                }
+                else if (occupies == enemy) {
+                    enemyStreak += 1;
+                    playerStreak = 0;
+                }
+                else {
+                    ++playerStreak;
+                    ++enemyStreak;
+                }
+
+                if (playerStreak == threatStreak) {
+                    int boundCheck = row+1;
+                    if (boundCheck < leaf.getState().getHeight()) {
+                        if (leaf.getState().getAt(col,row+1) == 0) {
+                            totalPlayerStreaks += 1;
+                        }
+                    }
+                    playerStreak = 0;
+                }
+
+                if (enemyStreak == threatStreak) {
+                    int boundCheck = row+1;
+                    if (boundCheck < leaf.getState().getHeight()) {
+                        if (leaf.getState().getAt(col,row+1) == 0) {
+                            totalEnemyStreaks += 1;
+                        }
+                    }
+                    enemyStreak = 0;
+                }
+            }
+            playerStreak = 0;
+            enemyStreak = 0;
+        }
+        return (totalPlayerStreaks - totalEnemyStreaks);
+    }
+    public int determineThreatDiagonal(Node leaf, int threatStreak) {
+        int playerStreak = 0;
+        int enemyStreak = 0;
+        int totalPlayerStreaks = 0;
+        int totalEnemyStreaks = 0;
+        int occupies = 0;
+        int maxRow = leaf.getState().getHeight();
+        int maxCol = leaf.getState().getWidth();
+
+        // left to right
+
+        // top left to bottom right, moving down the rows
+        for (int rowBegin = maxRow-1; rowBegin > 2; rowBegin--) {
+            for (int row = rowBegin, col = 0; row >= 0 && col < maxCol; row--, col++) {
+                occupies = leaf.getState().getAt(col,row);
+                if (occupies == player) {
+                    playerStreak += 1;
+                    enemyStreak = 0;
+                }
+                else if (occupies == enemy) {
+                    enemyStreak += 1;
+                    playerStreak = 0;
+                }
+                else {
+                    ++playerStreak;
+                    ++enemyStreak;
+                }
+
+                if (playerStreak >= totalEnemyStreaks) {
+                    int rowBound = row+3;
+                    int colBound = col-3;
+                    if (rowBound < leaf.getState().getHeight() && colBound >= 0) {
+                        if (leaf.getState().getAt(col-3, row+3) == 0) {
+                            totalPlayerStreaks += 1;
+                        }
+                    }
+                    playerStreak = 0;
+                }
+                if (enemyStreak >= totalEnemyStreaks) {
+                    int rowBound = row+3;
+                    int colBound = col-3;
+                    if (rowBound < leaf.getState().getHeight() && colBound >= 0) {
+                        if (leaf.getState().getAt(col-3, row+3) == 0) {
+                            totalEnemyStreaks += 1;
+                        }
+                    }
+                    enemyStreak = 0;
+                }
+            }
+            playerStreak = 0;
+            enemyStreak = 0;
+        }
+
+        // top-left to bottom-right, moving up the columns
+        for (int colBegin = 1; colBegin < maxCol-3; colBegin++) {
+            for (int row = maxRow-1, col = colBegin; row >= 0 && col < maxCol; row--, col++) {
+                occupies = leaf.getState().getAt(col,row);
+                if (occupies == player) {
+                    playerStreak += 1;
+                    enemyStreak = 0;
+                }
+                else if (occupies == enemy) {
+                    enemyStreak += 1;
+                    playerStreak = 0;
+                }
+                else {
+                    ++playerStreak;
+                    ++enemyStreak;
+                }
+                if (playerStreak >= totalEnemyStreaks) {
+                    int rowBound = row+3;
+                    int colBound = col-3;
+                    if (rowBound < leaf.getState().getHeight() && colBound >= 0) {
+                        if (leaf.getState().getAt(col-3, row+3) == 0) {
+                            totalPlayerStreaks += 1;
+                        }
+                    }
+                    playerStreak = 0;
+                }
+                if (enemyStreak >= totalEnemyStreaks) {
+                    int rowBound = row+3;
+                    int colBound = col-3;
+                    if (rowBound < leaf.getState().getHeight() && colBound >= 0) {
+                        if (leaf.getState().getAt(col-3, row+3) == 0) {
+                            totalEnemyStreaks += 1;
+                        }
+                    }
+                    enemyStreak = 0;
+                }
+            }
+            playerStreak = 0;
+            enemyStreak = 0;
+        }
+
+        // right to left
+
+        // top-right to bottom-left, moving down the columns
+        for (int colBegin = maxCol-1; colBegin >= 3; colBegin--) {
+            for (int row = maxRow-1, col = colBegin; row >= 0 && col >= 0; row--, col--) {
+                occupies = leaf.getState().getAt(col,row);
+                if (occupies == player) {
+                    playerStreak += 1;
+                    enemyStreak = 0;
+                }
+                else if (occupies == enemy) {
+                    enemyStreak += 1;
+                    playerStreak = 0;
+                }
+                else {
+                    ++playerStreak;
+                    ++enemyStreak;
+                }
+                if (playerStreak >= totalEnemyStreaks) {
+                    int rowBound = row+3;
+                    int colBound = col+3;
+                    if (rowBound < leaf.getState().getHeight()
+                            && colBound < leaf.getState().getWidth()) {
+                        if (leaf.getState().getAt(col+3, row+3) == 0) {
+                            totalPlayerStreaks += 1;
+                        }
+                    }
+                    playerStreak = 0;
+                }
+                if (enemyStreak >= totalEnemyStreaks) {
+                    int rowBound = row+3;
+                    int colBound = col+3;
+                    if (rowBound < leaf.getState().getHeight()
+                            && colBound < leaf.getState().getWidth()) {
+                        if (leaf.getState().getAt(col+3, row+3) == 0) {
+                            totalEnemyStreaks += 1;
+                        }
+                    }
+                    enemyStreak = 0;
+                }
+            }
+            playerStreak = 0;
+            enemyStreak = 0;
+        }
+
+        // top-right to bottom-left, moving down the rows
+        for (int rowBegin = maxRow-1; rowBegin >= 2; rowBegin--) {
+            for (int row = rowBegin, col = maxCol-1; row >= 0 && col >= 0; row--, col--) {
+                occupies = leaf.getState().getAt(col,row);
+                if (occupies == player) {
+                    playerStreak += 1;
+                    enemyStreak = 0;
+                }
+                else if (occupies == enemy) {
+                    enemyStreak += 1;
+                    playerStreak = 0;
+                }
+                else {
+                    ++playerStreak;
+                    ++enemyStreak;
+                }
+                if (playerStreak >= totalEnemyStreaks) {
+                    int rowBound = row+3;
+                    int colBound = col+3;
+                    if (rowBound < leaf.getState().getHeight()
+                            && colBound < leaf.getState().getWidth()) {
+                        if (leaf.getState().getAt(col+3, row+3) == 0) {
+                            totalPlayerStreaks += 1;
+                        }
+                    }
+                    playerStreak = 0;
+                }
+                if (enemyStreak >= totalEnemyStreaks) {
+                    int rowBound = row+3;
+                    int colBound = col+3;
+                    if (rowBound < leaf.getState().getHeight()
+                            && colBound < leaf.getState().getWidth()) {
+                        if (leaf.getState().getAt(col+3, row+3) == 0) {
+                            totalEnemyStreaks += 1;
+                        }
+                    }
+                    enemyStreak = 0;
                 }
             }
             playerStreak = 0;
