@@ -42,9 +42,13 @@ public class DeepConnect extends AIModule {
 
     /**
      * Kickstarts the minimax algorithm by traveling through the tree,
-     * using the passed in game state as the "root".
+     * using the passed in game state as the "root". This minimax algorithm
+     * is modified in that is utilizes alpha-beta pruning.
      *
      * @param treeNode The current board state when this AI's getNextMove() is called
+     * @param depth The specified depth of the tree
+     * @param alpha The best value so far along max's path
+     * @param beta the best value so far along min's path
      * @return The column index with the highest payoff value.
      */
     public int alphaBeta(Node treeNode, int depth, int alpha, int beta) {
