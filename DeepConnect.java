@@ -42,7 +42,7 @@ public class DeepConnect extends AIModule {
         else {
             enemy = 1;
         }
-        chosenMove = alphaBeta(root, 6, alpha, beta);
+        chosenMove = alphaBeta(root, 10, alpha, beta);
     }
 
     /**
@@ -97,16 +97,19 @@ public class DeepConnect extends AIModule {
      * @return The column index with the highest payoff value.
      */
     public int alphaBeta(Node root, int level, int alpha, int beta) {
-        int value = maxValue(root, level-1, alpha, beta);
-        return value;
+        Scoring value = maxValue(root, level-1, alpha, beta);
+        return value.getColumn();
     }
 
-    public int maxValue(Node currentNode, int level, int alpha, int beta) {
+    public Scoring maxValue(Node currentNode, int level, int alpha, int beta) {
         // terminal state check
         if (level == 0) {
-            return calculatePayoff(currentNode);
+            Scoring value = new Scoring();
+            value.setValue(calculatePayoff(currentNode));
+            return value;
         }
-        int value = Integer.MIN_VALUE;
+        Scoring value = new Scoring();
+        value.setValue(Integer.MIN_VALUE);
         Node child;
         for (int col = 0; col < currentNode.getState().getWidth(); ++col) {
             GameStateModule stateCopy = currentNode.getState().copy();
@@ -119,21 +122,25 @@ public class DeepConnect extends AIModule {
             stateCopy.makeMove(col);
             child = new Node(col, stateCopy, currentNode);
             //currentNode.addChild(child);
-            value = Math.max(value, minValue(child, level-1,  alpha, beta));
-            if (value >= beta) {
+            value.setValue(Math.max(value.getValue(), minValue(child, level-1,  alpha, beta).getValue()));
+            if (value.getValue() >= beta) {
                 return value;
             }
-            alpha = Math.max(alpha, value);
+            alpha = Math.max(alpha, value.getValue());
+            value.setColumn(col);
         }
         return value;
     }
 
-    public int minValue(Node currentNode, int level, int alpha, int beta) {
+    public Scoring minValue(Node currentNode, int level, int alpha, int beta) {
         // terminal state check
         if (level == 0) {
-            return calculatePayoff(currentNode);
+            Scoring value = new Scoring();
+            value.setValue(calculatePayoff(currentNode));
+            return value;
         }
-        int value = Integer.MAX_VALUE;
+        Scoring value = new Scoring();
+        value.setValue(Integer.MAX_VALUE);
         Node child;
         for (int col = 0; col < currentNode.getState().getWidth(); ++col) {
             GameStateModule stateCopy = currentNode.getState().copy();
@@ -146,11 +153,12 @@ public class DeepConnect extends AIModule {
             stateCopy.makeMove(col);
             child = new Node(col, stateCopy, currentNode);
             //currentNode.addChild(child);
-            value = Math.min(value, maxValue(child, level-1,  alpha, beta));
-            if (value <= beta) {
+            value.setValue(Math.min(value.getValue(), maxValue(child, level-1,  alpha, beta).getValue()));
+            if (value.getValue() <= alpha) {
                 return value;
             }
-            alpha = Math.max(alpha, value);
+            beta = Math.min(beta, value.getValue());
+            value.setColumn(col);
         }
         return value;
     }
@@ -405,7 +413,26 @@ public class DeepConnect extends AIModule {
         return (totalPlayerStreaks - totalEnemyStreaks);
     }
 }
-/// A class that associates game states to nodes in a game tree.
+
+class Scoring {
+    private int column;
+    private int value;
+
+    public int getColumn() {
+        return column;
+    }
+    public int getValue() {
+        return value;
+    }
+
+    public void setColumn(int columnIn) {
+        column = columnIn;
+    }
+    public void setValue(int valueIn) {
+        value = valueIn;
+    }
+}
+
 /**
  * Node associates a created board state configuration to its
  * GameStateModule object member. This is to facilitate creation of the
