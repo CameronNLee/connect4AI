@@ -59,7 +59,7 @@ public class DeepConnect extends AIModule {
                 continue; // i.e. ignore making impossible children nodes
             }
             stateCopy.makeMove(col);
-            Node newChild = new Node(col, stateCopy);
+            Node newChild = new Node(col, stateCopy, root);
             root.addChild(newChild);
             buildTree(newChild, levels-1);
         }
@@ -385,6 +385,7 @@ class Node {
     private Integer col;
     private GameStateModule state;
     private ArrayList<Node> children;
+    private Node parent;
 
     Node() {
         col = -1;
@@ -394,9 +395,10 @@ class Node {
         state = newState;
         children = new ArrayList<Node>();
     }
-    Node(Integer column, final GameStateModule newState) {
+    Node(Integer column, final GameStateModule newState, Node newParent) {
         col = column;
         state = newState;
+        parent = newParent;
         children = new ArrayList<Node>();
     }
 
