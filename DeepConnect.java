@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * (add your name here)
  */
 
-public enum Evaluation {
+enum Evaluation {
     MIN,
     MAX
 }
@@ -33,7 +33,7 @@ public class DeepConnect extends AIModule {
         int alpha = Integer.MIN_VALUE;
         int beta = Integer.MAX_VALUE;
         Node root = new Node(game);
-        Evalution strategy = Evaluation.MAX;
+        Evaluation strategy = Evaluation.MAX;
         buildTree(root, 6, strategy);
         player = game.getActivePlayer();
         if (player == 1) {
