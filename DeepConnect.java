@@ -386,6 +386,9 @@ class Node {
     private GameStateModule state;
     private ArrayList<Node> children;
     private Node parent;
+    private Integer alpha;
+    private Integer beta;
+    private Integer utility;
 
     Node() {
         col = -1;
@@ -406,6 +409,12 @@ class Node {
         children.add(child);
     }
 
+    public Integer getAlpha() {
+        return alpha;
+    }
+    public Integer getBeta() {
+        return beta;
+    }
     public ArrayList<Node> getChildren() {
         return children;
     }
@@ -415,6 +424,9 @@ class Node {
     public GameStateModule getState() {
         return state;
     }
+    public Integer getUtility() {
+        return utility;
+    }
 
     public Boolean isLeafNode() {
         if (children.size() == 0) {
@@ -423,6 +435,15 @@ class Node {
         else {
             return false;
         }
+    }
+    public void setAlpha(Integer alphaIn) {
+        alpha = alphaIn;
+    }
+    public void setBeta(Integer betaIn) {
+        beta = betaIn;
+    }
+    public void setUtility(Integer utilityIn) {
+        utility = utilityIn;
     }
     public void setState(GameStateModule stateIn) {
         this.state = stateIn;
