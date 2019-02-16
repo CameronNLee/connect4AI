@@ -1,8 +1,6 @@
-// (c) Scott Madera, Cameron Lee, (add your name here)
+// (c) Scott Madera, Cameron Lee, Marshall Fan
 
 import java.util.ArrayList;
-import java.util.Random;
-import static java.lang.System.currentTimeMillis;
 
 /// Minimax AI module that picks moves after looking 6 levels down the game tree.
 /**
@@ -14,7 +12,7 @@ import static java.lang.System.currentTimeMillis;
  *
  * @author Scott Madera
  * @author Cameron Lee
- * (add your name here)
+ * @author Marshall Fan
  */
 public class DeepConnect extends AIModule {
     private int player;
@@ -38,18 +36,9 @@ public class DeepConnect extends AIModule {
             enemy = 1;
         }
         // alphaBeta(root, 11);
-        chosenMove = iterativeDeepeningResult(root, 7, alpha, beta);
+        chosenMove = alphaBeta(root, 8, alpha, beta);
     }
 
-    public int iterativeDeepeningResult(Node root, int depth, int alpha, int beta) {
-        int result = -1;
-        int depthCount = 0;
-        while (depthCount <= depth) {
-            result = alphaBeta(root, depthCount, alpha, beta, result);
-            ++depthCount;
-        }
-        return result;
-    }
 
     /**
      * Kickstarts the minimax algorithm by traveling through the tree,
@@ -58,20 +47,7 @@ public class DeepConnect extends AIModule {
      * @param treeNode The current board state when this AI's getNextMove() is called
      * @return The column index with the highest payoff value.
      */
-    public int alphaBeta(Node treeNode, int depth, int alpha, int beta, int result) {
-        if (depth < 0) {
-            throw new RuntimeException("Negative tree depth");
-        }
-        // tree can never grow past the root if depth is set to 0
-        // in this function; thus, decisions might as well be as
-        // good as random.
-        if (depth == 0) {
-            Random r = new Random();
-            int col = r.nextInt(treeNode.getState().getWidth());
-            while(!treeNode.getState().canMakeMove(col))
-                col = r.nextInt(treeNode.getState().getWidth());
-            return col;
-        }
+    public int alphaBeta(Node treeNode, int depth, int alpha, int beta) {
         int value = Integer.MIN_VALUE;
         int tempValue = Integer.MIN_VALUE;
         int finalMove = -1;
@@ -79,17 +55,11 @@ public class DeepConnect extends AIModule {
         Node newChild;
         for (int col = 0; col < treeNode.getState().getWidth(); ++col) {
             stateCopy = treeNode.getState().copy();
-            if (!stateCopy.canMakeMove(col) || col == result) {
+            if (!stateCopy.canMakeMove(col)) {
                 continue; // i.e. ignore making impossible children nodes
             }
-            if (result != -1) {
-                stateCopy.makeMove(result);
-                newChild = new Node(result, stateCopy);
-            }
-            else {
-                stateCopy.makeMove(col);
-                newChild = new Node(col, stateCopy);
-            }
+            stateCopy.makeMove(col);
+            newChild = new Node(col, stateCopy);
             treeNode.addChild(newChild);
             tempValue = Math.max(tempValue, getMinValue(newChild, depth-1, alpha, beta));
             if (tempValue >= beta) {
