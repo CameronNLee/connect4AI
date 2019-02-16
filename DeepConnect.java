@@ -110,6 +110,7 @@ public class DeepConnect extends AIModule {
         }
         Scoring value = new Scoring();
         value.setValue(Integer.MIN_VALUE);
+        int prevValue = Integer.MIN_VALUE;
         Node child;
         for (int col = 0; col < currentNode.getState().getWidth(); ++col) {
             GameStateModule stateCopy = currentNode.getState().copy();
@@ -127,8 +128,16 @@ public class DeepConnect extends AIModule {
                 return value;
             }
             alpha = Math.max(alpha, value.getValue());
-            value.setColumn(col);
-        }
+            // code to drop coin into the column with highest payoff
+            // after cycling and comparing root's children's payoffs.
+            // this specific case is only done for the root node, who is
+            // assumed to be the max player at all times. Thus, we do not
+            // do the same for minValue.
+            if (value.getValue() > prevValue) {
+                value.setColumn(col);
+                prevValue = value.getValue();
+            }
+        } // end of for loop
         return value;
     }
 
