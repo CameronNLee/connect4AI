@@ -61,9 +61,7 @@ public class DeepConnect extends AIModule {
             stateCopy.makeMove(col);
             Node newChild = new Node(col, stateCopy);
             root.addChild(newChild);
-        }
-        for (int i = 0; i < root.getChildren().size(); i++) {
-            root.getChildren().set(i, buildTree(root.getChildren().get(i), levels-1));
+            buildTree(newChild, levels-1);
         }
         return root;
     }
@@ -108,6 +106,7 @@ public class DeepConnect extends AIModule {
         }
         return utilityValue;
     }
+
     public int getMinValue(Node currentNode, int alpha, int beta) {
         if (currentNode.isLeafNode()) {
             return calculatePayoff(currentNode);
