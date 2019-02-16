@@ -14,6 +14,12 @@ import java.util.ArrayList;
  * @author Cameron Lee
  * (add your name here)
  */
+
+public enum Evaluation {
+    MIN,
+    MAX
+}
+
 public class DeepConnect extends AIModule {
     private int player;
     private int enemy;
@@ -27,7 +33,8 @@ public class DeepConnect extends AIModule {
         int alpha = Integer.MIN_VALUE;
         int beta = Integer.MAX_VALUE;
         Node root = new Node(game);
-        buildTree(root, 6);
+        Evalution strategy = Evaluation.MAX;
+        buildTree(root, 6, strategy);
         player = game.getActivePlayer();
         if (player == 1) {
             enemy = 2;
@@ -45,7 +52,7 @@ public class DeepConnect extends AIModule {
      * @param levels The depth
      * @return returns the passed in node (base case condition)
      */
-    public Node buildTree(Node root, int levels) {
+    public Node buildTree(Node root, int levels, Evaluation strategy) {
         if (levels == 0) { // base case
             return root;
         }
@@ -64,7 +71,13 @@ public class DeepConnect extends AIModule {
             if (levels == 1) { // leaf node
                 newChild.setUtility(calculatePayoff(newChild));
             }
-            buildTree(newChild, levels-1);
+            if (strategy == Evaluation.MAX) {
+                strategy = Evaluation.MIN;
+            }
+            else {
+                strategy = Evaluation.MAX;
+            }
+            buildTree(newChild, levels-1, strategy);
         }
         return root;
     }
