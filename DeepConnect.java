@@ -34,7 +34,8 @@ public class DeepConnect extends AIModule {
         else {
             enemy = 1;
         }
-        chosenMove = alphaBeta(root, 9, alpha, beta);
+        ArrayList<Integer> columns = buildOrderedList();
+        chosenMove = alphaBeta(root, 10, alpha, beta, columns);
     }
 
     /**
@@ -44,21 +45,20 @@ public class DeepConnect extends AIModule {
      * @param treeNode The current board state when this AI's getNextMove() is called
      * @return The column index with the highest payoff value.
      */
-    public int alphaBeta(Node treeNode, int depth, int alpha, int beta) {
+    public int alphaBeta(Node treeNode, int depth, int alpha, int beta, ArrayList<Integer> columns) {
         int value = Integer.MIN_VALUE;
         int tempValue = Integer.MIN_VALUE;
         int finalMove = -1;
         GameStateModule stateCopy;
         Node newChild;
-        ArrayList<Integer> orderedCols = buildOrderedList();
-        for (int col : orderedCols) {
+        for (int col : columns) {
             stateCopy = treeNode.getState().copy();
             if (!stateCopy.canMakeMove(col)) {
                 continue; // i.e. ignore making impossible children nodes
             }
             stateCopy.makeMove(col);
             newChild = new Node(col, stateCopy);
-            tempValue = Math.max(tempValue, getMinValue(newChild, depth-1, alpha, beta));
+            tempValue = Math.max(tempValue, getMinValue(newChild, depth-1, alpha, beta, columns));
             if (tempValue >= beta) {
                 return tempValue;
             }
@@ -71,22 +71,21 @@ public class DeepConnect extends AIModule {
         return finalMove;
     }
 
-    public int getMaxValue(Node currentNode, int depth, int alpha, int beta) {
+    public int getMaxValue(Node currentNode, int depth, int alpha, int beta, ArrayList<Integer> columns) {
         // terminal state check
         if ((currentNode.getState().isGameOver()) || (depth == 0)) {
             return calculatePayoff(currentNode);
         }
         int utilityValue = Integer.MIN_VALUE;
         GameStateModule stateCopy;
-        ArrayList<Integer> orderedCols = buildOrderedList();
-        for (int col : orderedCols) {
+        for (int col : columns) {
             stateCopy = currentNode.getState().copy();
             if (!stateCopy.canMakeMove(col)) {
                 continue; // i.e. ignore making impossible children nodes
             }
             stateCopy.makeMove(col);
             Node newChild = new Node(col, stateCopy);
-            utilityValue = Math.max(utilityValue, getMinValue(newChild, depth-1, alpha, beta));
+            utilityValue = Math.max(utilityValue, getMinValue(newChild, depth-1, alpha, beta, columns));
             if (utilityValue >= beta) {
                 return utilityValue;
             }
@@ -94,21 +93,20 @@ public class DeepConnect extends AIModule {
         }
         return utilityValue;
     }
-    public int getMinValue(Node currentNode, int depth, int alpha, int beta) {
+    public int getMinValue(Node currentNode, int depth, int alpha, int beta, ArrayList<Integer> columns) {
         if ((currentNode.getState().isGameOver()) || (depth == 0)) {
             return calculatePayoff(currentNode);
         }
         int utilityValue = Integer.MAX_VALUE;
         GameStateModule stateCopy;
-        ArrayList<Integer> orderedCols = buildOrderedList();
-        for (int col : orderedCols) {
+        for (int col : columns) {
             stateCopy = currentNode.getState().copy();
             if (!stateCopy.canMakeMove(col)) {
                 continue;
             }
             stateCopy.makeMove(col);
             Node newChild = new Node(col, stateCopy);
-            utilityValue = Math.min(utilityValue, getMaxValue(newChild, depth-1, alpha, beta));
+            utilityValue = Math.min(utilityValue, getMaxValue(newChild, depth-1, alpha, beta, columns));
             if (utilityValue <= alpha) {
                 return utilityValue;
             }
